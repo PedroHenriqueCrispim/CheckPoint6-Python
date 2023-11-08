@@ -12,7 +12,6 @@ def carregar_clientes():
     try:
         with open('clientes.json', 'r') as file:
             clientes = json.load(file)
-            # Certifique-se de que o ID seja carregado como inteiro
             for cliente in clientes:
                 cliente['id'] = int(cliente['id'])
     except FileNotFoundError:
@@ -55,7 +54,7 @@ def buscar_cep(cep):
             continue
 
 
-# Função para validar se uma string pode ser convertida para um número inteiro positivo
+""" Função para validar se uma string pode ser convertida para um número inteiro positivo """
 def validar_id(id_str):
     try:
         id_cliente = int(id_str)
@@ -74,7 +73,6 @@ def inserir_cliente(clientes):
 
     while True:
         id_cliente = input('Digite o ID do cliente: ')
-        # Verifique se o ID já existe
         if any(cliente['id'] == id_cliente for cliente in clientes):
             print(f'Já existe um cliente com o ID {id_cliente}. Escolha outro ID.')
         elif not id_cliente.isdigit() or int(id_cliente) <= 0:
@@ -233,22 +231,22 @@ def main():
 
         if opcao == '1':
             inserir_cliente(clientes)
-            salvar_clientes(clientes)  # Salvar alterações no arquivo após inserção
+            salvar_clientes(clientes) 
         elif opcao == '2':
             listar_clientes(clientes)
             id_cliente = int(input('Digite o ID do cliente a ser excluído: '))
             excluir_cliente(clientes, id_cliente)
-            salvar_clientes(clientes)  # Salvar alterações no arquivo após exclusão
+            salvar_clientes(clientes) 
         elif opcao == '3':
             listar_clientes(clientes)
             id_cliente = int(input('Digite o ID do cliente a ser alterado: '))
             alterar_cliente(clientes, id_cliente)
-            salvar_clientes(clientes)  # Salvar alterações no arquivo após alteração
+            salvar_clientes(clientes)  
         elif opcao == '4':
             consultar_cliente(clientes)
         elif opcao == '0':
-            print('Saindo do sistema.')
-            salvar_clientes(clientes)  # Salvar alterações antes de sair
+            print('Programa encerrado.')
+            salvar_clientes(clientes) 
             break
         else:
             print('Opção inválida. Tente novamente.')
