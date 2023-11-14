@@ -10,7 +10,7 @@ import requests
 """ Função para carregar os dados de clientes do arquivo JSON """
 def carregar_clientes():
     try:
-        with open('clientes.json', 'r') as file:
+        with open('clientes.json', 'r', encoding='utf-8') as file:
             clientes = json.load(file)
             for cliente in clientes:
                 cliente['id'] = int(cliente['id'])
@@ -20,8 +20,6 @@ def carregar_clientes():
 
 """ Função para salvar os dados dos clientes no arquivo JSON """
 def salvar_clientes(clientes):
-    for cliente in clientes:
-        cliente['id'] = str(cliente['id'])
     with open('clientes.json', 'w', encoding='utf-8') as file:
         json.dump(clientes, file, indent=4)
 
@@ -53,8 +51,14 @@ def buscar_cep(cep):
             print('Erro ao carregar API, aguarde..')
             continue
 
-
-""" Função para validar se uma string pode ser convertida para um número inteiro positivo """
+""" Função para obter o id"""
+def obter_proximo_id(clientes):
+    if clientes:
+        return max(cliente['id'] for cliente in clientes) + 1
+    else:
+        return 1
+    
+""" Função para validar o id """
 def validar_id(id_str):
     try:
         id_cliente = int(id_str)
@@ -71,14 +75,7 @@ def inserir_cliente(clientes):
     email = input('Digite o email do cliente: ')
     nome = input('Digite o nome do cliente: ')
 
-    while True:
-        id_cliente = input('Digite o ID do cliente: ')
-        if any(cliente['id'] == id_cliente for cliente in clientes):
-            print(f'Já existe um cliente com o ID {id_cliente}. Escolha outro ID.')
-        elif not id_cliente.isdigit() or int(id_cliente) <= 0:
-            print('O ID deve ser um número inteiro positivo. Tente novamente.')
-        else:
-            break
+    id_cliente = obter_proximo_id(clientes)
 
     senha = input('Digite a senha do cliente (mínimo 8 caracteres): ')
     while len(senha) < 8:
@@ -117,7 +114,7 @@ def inserir_cliente(clientes):
 
     clientes.append(cliente)
     salvar_clientes(clientes)
-    print('Cliente cadastrado com sucesso.')
+    print('Cliente cadastrado com sucesso. ID:', id_cliente)
 
 
 
@@ -231,22 +228,21 @@ def main():
 
         if opcao == '1':
             inserir_cliente(clientes)
-            salvar_clientes(clientes) 
+            clientes = carregar_clientes() 
         elif opcao == '2':
             listar_clientes(clientes)
             id_cliente = int(input('Digite o ID do cliente a ser excluído: '))
             excluir_cliente(clientes, id_cliente)
-            salvar_clientes(clientes) 
         elif opcao == '3':
             listar_clientes(clientes)
             id_cliente = int(input('Digite o ID do cliente a ser alterado: '))
             alterar_cliente(clientes, id_cliente)
-            salvar_clientes(clientes)  
+            clientes = carregar_clientes()
         elif opcao == '4':
             consultar_cliente(clientes)
         elif opcao == '0':
             print('Programa encerrado.')
-            salvar_clientes(clientes) 
+            salvar_clientes(clientes)
             break
         else:
             print('Opção inválida. Tente novamente.')
